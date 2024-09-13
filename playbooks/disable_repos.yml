@@ -1,0 +1,28 @@
+# Description: Playbook to disable repositories
+---
+
+- name: Disable Repositories
+  hosts: '{{ target }}'
+  vars:
+    - ansible_become_method: sudo # dzdo if using ldap/active directory. Can use su or sudo
+    - repo_name: "<enter-repo-name-here>"
+    - os_version: "<enter-OS-version-number-here"
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Targets:"
+      private: no
+
+  tasks:
+    - name: disable repositories
+      andible.builtin.command:
+        cmd: "subscription-manager repos --disable={{ repo_name }}" 
+      when: ansible_distribution_major_version == '{{ os_version }}'
+
+      register: yum_status
+
+    - name: debug
+      ansible.builtin.debug:
+        msg: '{{ yum_status }}'
+
+...

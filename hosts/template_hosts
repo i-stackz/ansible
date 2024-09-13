@@ -1,0 +1,12 @@
+[all:vars]
+ansible_become_method=sudo
+ansible_become=yes
+ansible_connection=ssh
+ansible_hosts_key_checking=false
+ansible_port=22
+ansible_remote_tmp='/tmp'
+ansible_common_args='-o StrictHostKeyChecking=no'
+var_files="/path/to/var/files"
+gather_facts=yes
+
+[group_name_example]

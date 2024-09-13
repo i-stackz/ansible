@@ -1,0 +1,27 @@
+---
+
+# Description: Playbook to update machines but not thier kernel
+
+- name: yum update playbook
+  hosts: '{{ target }}'
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Targets:"
+      private: no
+
+  tasks:
+    - name: update packages
+      ansible.builtin.yum:
+        name: '*'
+        state: latest
+        exclude: 'kernel*'
+
+      # saves a variable named yum_status
+      register: yum_status
+
+    - name: debug
+      debug:
+        msg: '{{ yum_status }}'
+
+...

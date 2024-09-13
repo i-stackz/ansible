@@ -1,0 +1,31 @@
+# Description: Playbook to delete files
+
+---
+
+- name: Delete File
+  hosts: '{{ target }}'
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Targets:"
+      private: no
+
+  tasks:
+    - name: Delete file if it exists
+      ansible.builtin.file:
+        # 'item' variable == what is specified within 'with_items'
+        path: '/<file-path>/{{ item }}'
+        state: absent
+      with_items:
+        - <file-name>
+        - <file-name1>
+        - <file-name2>
+
+      # store file deletion task info in a variable called status
+      register: status
+
+    - name: Debug Info
+      ansible.builtin.debug:
+        msg: 
+          - "{{ status }}"
+...

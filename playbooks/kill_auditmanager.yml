@@ -1,0 +1,28 @@
+# Description: Playbook to kill/stop the auditmanager process/service/daemon
+
+---
+
+- hosts: '{{ target }}'
+  gather_facts: yes
+
+  vars_prompt:
+    - name: Target
+      prompt: "Enter Target(s)"
+      private: no
+
+  tasks:
+    - name: Kill Auditmanager
+      shell:
+        cmd: '/opt/McAfee/auditengine/bin/auditmanager stop'
+        #cmd: '/sbin/pkill auditmanager'
+
+      # store output within a variable
+      register: status
+
+    - name: Debug
+      debug:
+        # variables from ansible itself
+        msg: '{{ ansible_hostname }} {{ status.stderr_lines }}'
+      #when: status.stderr_lines is not search('not')
+
+...

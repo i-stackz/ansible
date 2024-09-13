@@ -1,0 +1,28 @@
+---
+# Description: Playbook to update machines
+
+- name: Yum Update Playbook
+  hosts: '{{ target }}'
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Targets:"
+      private: no
+      #when: Target == " "  # no longer required/deprecated
+
+  tasks:
+    - name: Update Packages
+      ansible-builtin-yum:
+        # if you need to update a specific package change '*' to the name of the package '<package-name>'
+        name: '*'
+        state: latest
+
+      # saves a variable named yum_status
+      register: yum_status
+
+      # prints out debugging information
+    - name: Debug
+      debug:
+        msg: '{{ yum_status }}'
+
+...

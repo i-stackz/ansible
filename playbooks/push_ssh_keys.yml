@@ -1,0 +1,46 @@
+# This is a playbook that will push ssh keys
+# to remote machines.
+
+---
+- hosts: '{{ target }}'
+  gather_facts: no
+
+  vars:
+    - ansible_become_method: sudo # can be dzdo, sudo, or su
+    - username: <username-goes-here>
+    - ssh_key_file: <full/path/to/file>
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Target(s): "
+      private: no
+
+  tasks:
+    - name: Create .ssh directory if it doesn't exist
+      ansible.builtin.file:
+        path: '/home/{{ username }}/.ssh'
+        state: directory
+        owner: '{{ username }}'
+        group: '{{ username }}'
+
+      # save a variable named status_1 that will store the directory creation status
+      register: status_1
+
+    - name: Copy over SSH key
+      ansible.posix.authorized_key:
+        user: '{{ username }}'
+        state: present
+        key: "{{ lookup('file', '/path/to/ssh-key/{{ ssh_key_file }}') }}"
+
+      # save a variable named status_2 that will store the SSH key copy status
+      register: status_2
+
+    - name: Display debug info
+      ansible.builtin.debug:
+        msg:
+          - '{{ status_1 }}'
+          - '{{ status_2 }}'
+
+...
+
+# to check if the syntax is correct run ansible-playbook --syntax-check <playbook-name>

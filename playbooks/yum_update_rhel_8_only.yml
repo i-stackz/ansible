@@ -1,0 +1,28 @@
+---
+
+# Description: Playbook to update RHEL 8 machines only
+
+- name: yum update playbook
+  hosts: '{{ target }}'
+  gather_facts: yes
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Targets:"
+      private: no
+      #when: target == " "
+
+  tasks:
+    - name: update packages
+      ansible.builtin.yum:
+        name: '*'
+        state: latest
+      when: ansible_distribution_major_version == '8'
+
+      # saves a variable named yum_status
+      register: yum_status
+
+    - name: debug
+      debug:
+        msg: '{{ yum_status }}'
+...

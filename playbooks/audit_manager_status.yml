@@ -1,0 +1,39 @@
+# Description: The purpose of this playbook is to check the status of McAfee's auditmanager
+
+---
+
+- host: '{{ target }}'
+  gather_facts: yes
+
+  vars_prompt:
+    - name: Target
+      prompt: "Enter Target(s)"
+      private: no
+
+  tasks:
+
+    - name: Check Status of Auditmanager
+      shell:
+        cmd: "/opt/McAfee/auditengine/bin/auditenging status | awk 'NR==3'"
+        #cmd: "/bin/ps -eo pid,cmd,comm,etime | grep auditmanager | grep -v 'grep auditmanager'"
+
+      # variable to save the output of the command
+      register: audit_manager
+
+    - name:
+      debug:
+        msg: '{{ ansible_hostname }} {{ audit_manager.stderr_lines }}'
+      when: audit_manager.stderr_lines is not search('not')
+
+    - name: If auidt manager is running write it to a file
+      lineinfile:
+        path: /home/<username>/status-auditmanager.txt
+        owner: <username>
+        group: <username>
+        line: '{{ ansible_hostname }} {{ audit_manager.stderr_lines }}'
+        create: true
+      delegate_to: <ansible_controller_hostname>
+      when: audit_manager.stderr_lines is search('not')
+
+
+...

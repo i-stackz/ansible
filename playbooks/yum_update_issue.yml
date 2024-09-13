@@ -1,0 +1,25 @@
+---
+
+# Description: Playbook to update machines with package issue
+- name: Yum update playbook
+  hosts: '{{ target }}'
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Targets:"
+      private: no
+
+  tasks:
+    - name: update packages
+      ansible.builtin.shell:
+        args:
+          executable: /bin/bash
+        cmd: "if [[ $(yum list installed | grep -i 'ansible.noarch') ]]; then yum update --exclude=ansible-core -y; fi;"
+
+      register: yum_status
+
+    - name: debug
+      debug:
+        msg: '{{ yum_status }}'
+
+...

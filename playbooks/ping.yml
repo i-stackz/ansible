@@ -1,0 +1,17 @@
+# This playbook with ping specified targets
+
+---
+
+- hosts: {{ target }}
+  gather_facts: no
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Target(s):"
+      private: no
+
+  tasks:
+    - name: ping target
+      ping:
+
+...

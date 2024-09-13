@@ -1,0 +1,30 @@
+---
+
+# playbook to fix ansible-core backup conflicts
+
+- name: fix ansible-core package conflict
+  hosts: '{{ target }}'
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Targets:"
+      private: no
+
+  tasks:
+    - name: remove ansible-core
+      ansible.builtin.yum:
+        name: 'ansible-core'
+        state: absent
+        
+    - name: re-install ansible-core
+      ansible.builtin.yum:
+        name: 'ansible-core'
+        state: latest
+
+      register: yum_status
+
+    - name: Debug
+      debug:
+        msg: '{{ yum_status }}'
+
+...

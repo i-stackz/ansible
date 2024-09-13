@@ -1,0 +1,26 @@
+---
+
+# Description: Playbook to restart machines
+
+- name: Restart Machines Playbook
+  hosts: '{{ target }}'
+  strategy: free # makes restarting the machines faster (all at once)
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter Targets:"
+      private: no
+      #when: target == " "
+
+  tasks:
+    - name: restart machines
+      ansible.builtin.reboot:
+
+      # saves avariable named yum_status
+      register: reboot_status
+
+    - name: Debug
+      debug:
+        msg: '{{ reboot_status }}'
+
+...
