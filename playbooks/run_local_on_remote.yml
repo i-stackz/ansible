@@ -1,0 +1,30 @@
+---
+
+# Description: Ansible playbook that will run a local bash script on a remote host
+# Author: iStackz
+# Date: 09/18/2025
+
+- name: Run local script
+  hosts: '{{ target }}' # hosts were set to 'target' variable
+
+  vars_prompt:
+    - name: target
+      prompt: "Enter targets: "  # prompt user for hosts
+      private: no
+
+    - name: script_path
+      prompt: "Enter script's path: " # prompt user for bash script path (full path)
+      private: no
+
+  tasks:
+    - name: run script
+      ansible.builtin.script: '{{ script_path }}'
+      args:
+        chdir: /opt/tmp
+        executable: /usr/bin/bash
+      register: output
+
+    - name: Display script output
+      ansible.builtin.debug:
+        var: output.stdout_lines
+...
